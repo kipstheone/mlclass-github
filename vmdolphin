@@ -1,0 +1,110 @@
+# Run this cell to import libraries and check that tensorflow is properly installed
+import pandas as pd
+import numpy as np
+import math
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+import plotly.express as px
+import tensorflow as tf
+
+print("TensorFlow version:", tf.__version__)
+
+# TODO Load data
+data = pd.read_csv("classifcation_and_seqs_aln.csv").dropna() #loads our dataset
+print(data.head()) #shows the first 5 rows of our data
+
+#TODO Handle NA Values
+data = data.dropna()
+
+# TODO encode string data using LabelEncoder
+encoder = LabelEncoder()
+sequenceList = data["sequence"].tolist()
+charactersList = []
+
+for sequence in sequenceList:
+   charList = []
+   for i in range(len(sequence)):
+       if (sequence[i] == "-"):
+           charList.append(0)
+       if (sequence[i] == "A"):
+           charList.append(1)
+       if (sequence[i] == "C"):
+           charList.append(3)
+       if (sequence[i] == "G"):
+           charList.append(4)
+       if (sequence[i] == "T"):
+           charList.append(2)
+   charactersList.append(np.array(charList))
+
+# for sequence in sequenceList:
+#     charList = []
+#     for base in sequence:
+
+#         if base == "-":
+#             identity = 0
+#         else if base == "A":
+#             identity = 2
+#         else if base == "C":
+#             identity = 3
+#         else if base == "G":
+#             identity = 3
+#         else if base == "T":
+#             identity = 2
+#         else:
+#             identity = 0
+
+#         if base in ["A", "T"]:
+#             pairs = 1
+#         else if base in ["C", "G"]:
+#             pairs = 2
+#         else:
+#             pairs = 0
+
+#         charList.append([identity, pairs])
+
+#     charactersList.append(np.array(charList))
+
+
+data["species"] = encoder.fit_transform(data["species"])
+
+
+#TODO Select your features. Select body_mass_g as your "target" (y) and everything else as X
+X_features = np.array(charactersList) #data[["culmen_length_mm", "culmen_depth_mm", "flipper_length_mm", "island", "sex", "body_mass_g",]]
+y_features = data["species"]
+
+print(X_features.shape)
+print(X_features[0])
+
+# TODO : Split the data into testing and training data. Use a 20% split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_features, y_features, test_size=0.2, random_state=42
+)
+
+# TODO create a neural network with tensorflow
+model = tf.keras.models.Sequential([
+    #tf.keras.layers.Flatten(input_shape=(4795, 2)),
+    
+    tf.keras.layers.Dense(1560, input_shape=[4795]), # input
+    #tf.keras.layers.Dense(10, activation='sigmoid'),  hidden layer
+    tf.keras.layers.Dense(1024, activation='relu'), # hidden layer     
+    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.Dense(256, activation='relu'),
+    tf.keras.layers.Dense(200, activation='relu'),
+    #tf.keras.layers.Dense(1) # output
+    tf.keras.layers.Softmax()
+
+])
+
+# TODO set your learning rate
+#lr = 0.0001
+lr = 0.000040
+
+#TODO Compile your model with a selected optimizer and loss function
+model.compile(
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+    optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
+    metrics=['accuracy']
+)
+
+# TODO: fit your model with X_train and Y_train
+history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100)
