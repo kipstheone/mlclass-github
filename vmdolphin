@@ -85,7 +85,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = tf.keras.models.Sequential([
     #tf.keras.layers.Flatten(input_shape=(4795, 2)),
     
-    tf.keras.layers.Dense(1560, input_shape=[47950]), # input
+    tf.keras.layers.Dense(1560, input_shape=[27040]), # input
     #tf.keras.layers.Dense(10, activation='sigmoid'),  hidden layer
     tf.keras.layers.Dense(1024, activation='relu'), # hidden layer     
     tf.keras.layers.Dense(512, activation='relu'),
