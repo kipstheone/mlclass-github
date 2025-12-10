@@ -85,12 +85,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 model = tf.keras.models.Sequential([
     #tf.keras.layers.Flatten(input_shape=(4795, 2)),
     
-    tf.keras.layers.Dense(1560, input_shape=[27040]), # input
+    tf.keras.layers.Dense(11, input_shape=[27040]), # input
     #tf.keras.layers.Dense(10, activation='sigmoid'),  hidden layer
-    tf.keras.layers.Dense(1024, activation='relu'), # hidden layer     
-    tf.keras.layers.Dense(512, activation='relu'),
-    tf.keras.layers.Dense(256, activation='relu'),
-    tf.keras.layers.Dense(200, activation='relu'),
+    tf.keras.layers.Dense(46, activation='relu'), # hidden layer     
+    #tf.keras.layers.Dense(46, activation='relu'),
     #tf.keras.layers.Dense(1) # output
     tf.keras.layers.Softmax()
 
@@ -108,4 +106,4 @@ model.compile(
 )
 
 # TODO: fit your model with X_train and Y_train
-history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=100)
+history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=200)
